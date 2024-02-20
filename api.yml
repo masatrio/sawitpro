@@ -15,44 +15,223 @@ info:
   license:
     name: MIT
 servers:
-  - url: http://localhost
+  - url: http://localhost:8080
 paths:
-  /hello:
-    get:
-      summary: This is just a test endpoint to get you started. Please delete this endpoint.
-      operationId: hello
-      parameters:
-        - name: id
-          in: query
-          required: true
-          schema:
-            type: integer
+  /auth/register:
+    post:
+      summary: register new user endpoint
+      operationId: register
+      tags:
+        - auth
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/RegisterRequest"
       responses:
-        '200':
-          description: Test return
+        200:
+          description: Successfully registered new user
           content:
-            application/json:    
+            application/json:
               schema:
-                $ref: "#/components/schemas/HelloResponse"
-        '404':
-          description: Not found
+                $ref: "#/components/schemas/RegisterResponse"
+        400:
+          description: Bad request
           content:
             application/json:
               schema:
                 $ref: "#/components/schemas/ErrorResponse"
+  /auth/login:
+    post:
+      summary: user login endpoint
+      operationId: login
+      tags:
+        - auth
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/LoginRequest"
+      responses:
+        200:
+          description: Successfully logged in
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/LoginResponse"
+        400:
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+  /profile:
+    get:
+      summary: get user profile endpoint
+      operationId: getProfile
+      tags:
+        - user
+      security:
+        - bearer: []
+      responses:
+        200:
+          description: Succeed get profile
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/GetProfileResponse"
+        403:
+          description: Forbidden access
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+    patch:
+      summary: update user profile endpoint
+      operationId: updateProfile
+      tags:
+        - user
+      security:
+        - bearer: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UpdateProfileRequest"
+      responses:
+        200:
+          description: 
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/UpdateProfileResponse"
+        400:
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        403:
+          description: Forbidden access
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        409:
+          description: Conflict phone number request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
 components:
+  securitySchemes:
+    bearer:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
   schemas:
-    HelloResponse:
-      type: object
-      required:
-        - message
-      properties:
-        message:
-          type: string
     ErrorResponse:
       type: object
       required:
-        - message
+        - errorMsg
+        - errorCode
       properties:
-        message:
+        errorMsg:
           type: string
+          description: A message describing the error that occurred
+        errorCode:
+          type: integer
+          format: int64
+          description: An error message id
+    RegisterRequest:
+      type: object
+      required:
+        - phoneNumber
+        - fullName
+        - password
+      properties:
+        phoneNumber:
+          type: string
+          minLength: 10
+          maxLength: 13
+          pattern: '^\+62'
+        fullName:
+          type: string
+          minLength: 3
+          maxLength: 60
+        password:
+          type: string
+          minLength: 6
+          maxLength: 64
+          pattern: '^[A-Za-z0-9]*[A-Z]+[A-Za-z0-9]*[0-9]+[A-Za-z0-9]*[^A-Za-z0-9]+[A-Za-z0-9]*$'
+    RegisterResponse:
+      type: object
+      required:
+        - userID
+      properties:
+        userID:
+          description: The ID of the user
+          type: integer
+          format: int64
+    LoginRequest:
+      type: object
+      required:
+        - phoneNumber
+        - password
+      properties:
+        phoneNumber:
+          type: string
+        password:
+          type: string
+    LoginResponse:
+      type: object
+      required:
+        - userID
+        - token
+      properties:
+        userID:
+          description: The ID of the user
+          type: integer
+          format: int64
+          example: 1
+        token:
+          description: user token
+          type: string
+          example: "ASd978yhjiuo.ASduho83uhqwinijdlsckcn/A(S*DUJHmioajcsoijc"
+    GetProfileResponse:
+      type: object
+      required:
+        - phoneNumber
+        - fullName
+      properties:
+        phoneNumber:
+          type: string
+        fullName:
+          type: string
+    UpdateProfileRequest:
+      type: object
+      properties:
+        phoneNumber:
+          type: string
+          minLength: 10
+          maxLength: 13
+          pattern: '^\+62'
+        fullName:
+          type: string
+          minLength: 3
+          maxLength: 60
+    UpdateProfileResponse:
+      type: object
+      required:
+        - phoneNumber
+        - fullName
+      properties:
+        phoneNumber:
+          type: string
+        fullName:
+          type: string
+    
