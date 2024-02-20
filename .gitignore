@@ -28,3 +28,7 @@ build
 
 # Generated
 generated
+
+mocks/
+
+coverage*
