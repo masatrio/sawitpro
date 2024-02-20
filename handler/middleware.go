@@ -4,9 +4,10 @@ import (
 	"context"
 	"fmt"
 
-	"github.com/deepmap/oapi-codegen/pkg/middleware"
+	codegenMiddleware "github.com/deepmap/oapi-codegen/pkg/middleware"
 	"github.com/getkin/kin-openapi/openapi3filter"
 	"github.com/labstack/echo/v4"
+	"github.com/labstack/echo/v4/middleware"
 	"github.com/sawitpro/UserService/common"
 	"github.com/sawitpro/UserService/generated"
 	"github.com/sawitpro/UserService/helper"
@@ -23,7 +24,7 @@ func InitMiddleware() ([]echo.MiddlewareFunc, error) {
 		return nil, fmt.Errorf("failed to load OpenAPI spec: %w", err)
 	}
 
-	reqValidatorMiddleware := middleware.OapiRequestValidatorWithOptions(spec, &middleware.Options{
+	reqValidatorMiddleware := codegenMiddleware.OapiRequestValidatorWithOptions(spec, &codegenMiddleware.Options{
 		Options: openapi3filter.Options{
 			AuthenticationFunc: func(ctx context.Context, input *openapi3filter.AuthenticationInput) error {
 				return nil
@@ -31,7 +32,7 @@ func InitMiddleware() ([]echo.MiddlewareFunc, error) {
 		},
 	})
 
-	return []echo.MiddlewareFunc{reqValidatorMiddleware, AuthMiddleware}, nil
+	return []echo.MiddlewareFunc{middleware.Recover(), reqValidatorMiddleware, AuthMiddleware}, nil
 }
 
 func AuthMiddleware(next echo.HandlerFunc) echo.HandlerFunc {

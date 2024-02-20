@@ -16,7 +16,7 @@ func TestInitMiddleware(t *testing.T) {
 	middlewareFuncs, err := InitMiddleware()
 	assert.NoError(t, err)
 	assert.NotNil(t, middlewareFuncs)
-	assert.Len(t, middlewareFuncs, 2) // Expecting two middleware functions
+	assert.Len(t, middlewareFuncs, 3)
 }
 
 func TestAuthMiddleware(t *testing.T) {
@@ -90,9 +90,7 @@ func TestAuthMiddleware(t *testing.T) {
 			rec := httptest.NewRecorder()
 			c := e.NewContext(req, rec)
 
-			// Execute
 			err := AuthMiddleware(func(c echo.Context) error {
-				// Assert the user ID set in the context
 				userID, ok := c.Get("userID").(int64)
 				if ok {
 					assert.Equal(t, tc.expectedUserID, userID)
@@ -101,7 +99,6 @@ func TestAuthMiddleware(t *testing.T) {
 				return nil
 			})(c)
 
-			// Assert
 			if tc.expectError {
 				assert.Error(t, err)
 			} else {

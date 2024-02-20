@@ -10,7 +10,6 @@ import (
 )
 
 func (c *Client) IncrementLoginCount(ctx context.Context, userID int64) error {
-	// Define the query to update the login count and updated_at
 	query := `
 		UPDATE users
 		SET login_count = login_count + 1, updated_at = CURRENT_TIMESTAMP
@@ -19,7 +18,6 @@ func (c *Client) IncrementLoginCount(ctx context.Context, userID int64) error {
 
 	tx, ok := ctx.Value(common.TX_KEY).(*sql.Tx)
 
-	// Prepare the statement
 	var stmt *sql.Stmt
 	var err error
 	if ok && tx != nil {

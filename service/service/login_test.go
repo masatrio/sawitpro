@@ -120,8 +120,6 @@ func TestLogin(t *testing.T) {
 					return nil
 				})
 				mockRepo.EXPECT().InsertUserActivityLog(gomock.Any(), tc.user.ID, common.LOGIN_ACTIVITY).Return(nil)
-
-				// Expecting IncrementLoginCount call
 				mockRepo.EXPECT().IncrementLoginCount(gomock.Any(), tc.user.ID).Return(errors.New("Increment Login Count Error"))
 			case "Token Generation Error":
 				hashedPassword, _ := helper.HashPassword(tc.password)
@@ -146,7 +144,6 @@ func TestLogin(t *testing.T) {
 			} else {
 				assert.Nil(t, err)
 				assert.NotNil(t, response)
-				// assert.Equal(t, tc.expectedToken, response.Token)
 			}
 		})
 	}

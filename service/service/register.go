@@ -32,7 +32,6 @@ func (s *Service) Register(ctx context.Context, params service.RegisterParam) (*
 			errors.SystemErrorType)
 	}
 
-	// Insert the new user into the repository
 	user, err := s.Repository.InsertUser(ctx, &repository.User{
 		FullName:       params.FullName,
 		HashedPassword: hashedPassword,

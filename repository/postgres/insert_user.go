@@ -11,7 +11,6 @@ import (
 )
 
 func (c *Client) InsertUser(ctx context.Context, user *repository.User) (*repository.User, error) {
-	// Define the query to insert a new user
 	query := `
 		INSERT INTO users (full_name, hashed_password, phone)
 		VALUES ($1, $2, $3)
@@ -20,7 +19,6 @@ func (c *Client) InsertUser(ctx context.Context, user *repository.User) (*reposi
 
 	tx, ok := ctx.Value(common.TX_KEY).(*sql.Tx)
 
-	// Prepare the statement
 	var stmt *sql.Stmt
 	var err error
 	if ok && tx != nil {
@@ -33,7 +31,6 @@ func (c *Client) InsertUser(ctx context.Context, user *repository.User) (*reposi
 	}
 	defer stmt.Close()
 
-	// Execute the prepared statement within the transaction or directly
 	var row *sql.Row
 	if tx != nil {
 		row = stmt.QueryRowContext(ctx, user.FullName, user.HashedPassword, user.Phone)
@@ -41,7 +38,6 @@ func (c *Client) InsertUser(ctx context.Context, user *repository.User) (*reposi
 		row = stmt.QueryRowContext(ctx, user.FullName, user.HashedPassword, user.Phone)
 	}
 
-	// Scan the result into a user object
 	insertedUser := &repository.User{}
 	err = row.Scan(
 		&insertedUser.ID,

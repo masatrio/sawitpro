@@ -11,14 +11,12 @@ import (
 )
 
 func (c *Client) InsertUserActivityLog(ctx context.Context, userID int64, activityType string) error {
-	// Define the query to insert user activity log
 	query := `
 		INSERT INTO user_activity_logs (user_id, activity_type)
 		VALUES ($1, $2)
 		RETURNING id
 	`
 	tx, ok := ctx.Value(common.TX_KEY).(*sql.Tx)
-	// Prepare the statement
 	var stmt *sql.Stmt
 	var err error
 	if ok && tx != nil {
@@ -31,14 +29,12 @@ func (c *Client) InsertUserActivityLog(ctx context.Context, userID int64, activi
 	}
 	defer stmt.Close()
 
-	// Execute the prepared statement within the transaction or directly
 	var result sql.Result
 	result, err = stmt.ExecContext(ctx, userID, activityType)
 	if err != nil {
 		return err
 	}
 
-	// Check if the insert was successful
 	rowsAffected, err := result.RowsAffected()
 	if err != nil {
 		return err

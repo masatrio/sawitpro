@@ -87,7 +87,6 @@ func TestUpdateProfile(t *testing.T) {
 
 	for _, tc := range tests {
 		t.Run(tc.name, func(t *testing.T) {
-			// Setup
 			ctrl := gomock.NewController(t)
 			defer ctrl.Finish()
 
@@ -107,10 +106,7 @@ func TestUpdateProfile(t *testing.T) {
 				mockService.EXPECT().UpdateProfile(gomock.Any(), gomock.Any()).Return(tc.expectedServiceResp, tc.expectedServiceError)
 			}
 
-			// Execute
 			mockServer.UpdateProfile(c)
-
-			// Assert
 			assert.Equal(t, tc.expectedStatus, rec.Code)
 		})
 	}

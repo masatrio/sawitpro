@@ -30,7 +30,6 @@ func TestCreateToken(t *testing.T) {
 }
 
 func TestValidateToken(t *testing.T) {
-	// #TC 1 Expiry Token
 	userID := int64(1)
 	expiration := time.Microsecond
 	tokenString, err := CreateToken(userID, expiration)
@@ -50,7 +49,6 @@ func TestValidateToken(t *testing.T) {
 		t.Errorf("Expected nil claims, got: %v", claims)
 	}
 
-	// #TC 2 Create a new token with a longer expiration time for testing
 	expiration = time.Hour
 	tokenString, err = CreateToken(userID, expiration)
 	if err != nil {
@@ -73,19 +71,15 @@ func TestValidateToken(t *testing.T) {
 }
 
 func TestInitializeKeys(t *testing.T) {
-	// Clear keys before initializing
 	privateKey = nil
 	publicKey = nil
 
-	// Initialize keys
 	initializeKeys()
 
-	// Check if privateKey and publicKey are initialized
 	if privateKey == nil || publicKey == nil {
 		t.Error("Expected privateKey and publicKey to be initialized, but one or both are nil")
 	}
 
-	// Encode keys to PEM format
 	privateKeyPEM := pem.EncodeToMemory(&pem.Block{
 		Type:  "RSA PRIVATE KEY",
 		Bytes: x509.MarshalPKCS1PrivateKey(privateKey),
@@ -98,18 +92,14 @@ func TestInitializeKeys(t *testing.T) {
 		Bytes: public,
 	})
 
-	// Set environment variables with base64-encoded keys
 	os.Setenv("JWT_PRIVATE_KEY", base64.StdEncoding.EncodeToString(privateKeyPEM))
 	os.Setenv("JWT_PUBLIC_KEY", base64.StdEncoding.EncodeToString(publicKeyPEM))
 
-	// Clear keys again
 	privateKey = nil
 	publicKey = nil
 
-	// Re-initialize keys
 	initializeKeys()
 
-	// Check if privateKey and publicKey are initialized after setting environment variables
 	if privateKey == nil || publicKey == nil {
 		t.Error("Expected privateKey and publicKey to be initialized after setting environment variables, but one or both are nil")
 	}

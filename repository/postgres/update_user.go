@@ -15,7 +15,6 @@ func (c *Client) UpdateUser(ctx context.Context, userID int64, fullName, phoneNu
 
 	tx, ok := ctx.Value(common.TX_KEY).(*sql.Tx)
 
-	// Prepare the statement
 	var stmt *sql.Stmt
 	var err error
 	if ok && tx != nil {
@@ -28,7 +27,6 @@ func (c *Client) UpdateUser(ctx context.Context, userID int64, fullName, phoneNu
 	}
 	defer stmt.Close()
 
-	// Execute the statement with the updated values
 	_, err = stmt.ExecContext(ctx, fullName, phoneNumber, userID)
 
 	return err
