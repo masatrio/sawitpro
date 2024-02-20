@@ -74,7 +74,6 @@ func TestInsertUser(t *testing.T) {
 
 	for _, tc := range testCases {
 		t.Run(tc.name, func(t *testing.T) {
-			// Create a new mock database connection
 			mockDB, mock, err := sqlmock.New()
 			if err != nil {
 				t.Fatalf("failed to create mock database: %v", err)
@@ -109,7 +108,6 @@ func TestInsertUser(t *testing.T) {
 					WillReturnError(errors.New("some error"))
 			}
 
-			// Call the InsertUser method with the mocked context and user object
 			var user *repository.User
 
 			if tc.transactionCtx {
@@ -125,7 +123,6 @@ func TestInsertUser(t *testing.T) {
 				user, err = repo.InsertUser(ctx, tc.user)
 			}
 
-			// Assert the results
 			assert.Equal(t, tc.expectedUser, user)
 			assert.Equal(t, tc.expectedError, err)
 		})

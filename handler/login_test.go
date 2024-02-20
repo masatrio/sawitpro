@@ -16,21 +16,21 @@ import (
 	"github.com/sawitpro/UserService/service"
 )
 
-func TestRegister(t *testing.T) {
+func TestLogin(t *testing.T) {
 	tests := []struct {
 		name                 string
 		requestBody          string
 		expectedStatus       int
 		expectServiceCall    bool
-		expectedServiceResp  *service.RegisterResponse
+		expectedServiceResp  *service.LoginResponse
 		expectedServiceError common.Error
 	}{
 		{
 			name:                 "Success",
-			requestBody:          `{"fullName": "maulana aji satrio", "phoneNumber": "+628232482440", "password": "Maulana1996@"}`,
+			requestBody:          `{"phoneNumber": "+628232482440", "password": "Maulana1996@"}`,
 			expectedStatus:       http.StatusOK,
 			expectServiceCall:    true,
-			expectedServiceResp:  &service.RegisterResponse{UserID: 123},
+			expectedServiceResp:  &service.LoginResponse{UserID: 1, Token: "token"},
 			expectedServiceError: nil,
 		},
 		{
@@ -43,7 +43,7 @@ func TestRegister(t *testing.T) {
 		},
 		{
 			name:                 "ServiceError",
-			requestBody:          `{"fullName": "maulana aji satrio", "phoneNumber": "+628232482440", "password": "Maulana1996@"}`,
+			requestBody:          `{"phoneNumber": "+628232482440", "password": "Maulana1996@"}`,
 			expectedStatus:       http.StatusBadRequest,
 			expectServiceCall:    true,
 			expectedServiceResp:  nil,
@@ -62,16 +62,16 @@ func TestRegister(t *testing.T) {
 			}
 
 			e := echo.New()
-			req := httptest.NewRequest(http.MethodPost, "/auth/register", strings.NewReader(tc.requestBody))
+			req := httptest.NewRequest(http.MethodPost, "/auth/login", strings.NewReader(tc.requestBody))
 			req.Header.Set(echo.HeaderContentType, echo.MIMEApplicationJSON)
 			rec := httptest.NewRecorder()
 			c := e.NewContext(req, rec)
 
 			if tc.expectServiceCall {
-				mockService.EXPECT().Register(gomock.Any(), gomock.Any()).Return(tc.expectedServiceResp, tc.expectedServiceError)
+				mockService.EXPECT().Login(gomock.Any(), gomock.Any()).Return(tc.expectedServiceResp, tc.expectedServiceError)
 			}
 
-			mockServer.Register(c)
+			mockServer.Login(c)
 
 			assert.Equal(t, tc.expectedStatus, rec.Code)
 		})
