@@ -8,10 +8,20 @@
   */
 
 /** This is test table. Remove this table and replace with your own tables. */
-CREATE TABLE test (
-	id serial PRIMARY KEY,
-	name VARCHAR ( 50 ) UNIQUE NOT NULL,
+CREATE TABLE users (
+    id SERIAL PRIMARY KEY,
+    full_name VARCHAR(60) NOT NULL,
+    hashed_password VARCHAR(255) NOT NULL,
+    phone VARCHAR(13) UNIQUE,
+    login_count INT NOT NULL DEFAULT 0,
+    created_at TIMESTAMP DEFAULT NOW(),
+    updated_at TIMESTAMP DEFAULT NOW()
 );
 
-INSERT INTO test (name) VALUES ('test1');
-INSERT INTO test (name) VALUES ('test2');
+CREATE TABLE user_activity_logs (
+    id SERIAL PRIMARY KEY,
+    user_id INT NOT NULL,
+    activity_type VARCHAR(13) NOT NULL,
+    created_at TIMESTAMP DEFAULT NOW(),
+    FOREIGN KEY (user_id) REFERENCES users(id)
+);
