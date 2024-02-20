@@ -14,4 +14,6 @@ type ServiceInterface interface {
 	Register(ctx context.Context, params RegisterParam) (*RegisterResponse, common.Error)
 
 	Login(ctx context.Context, params LoginParam) (*LoginResponse, common.Error)
+
+	GetProfile(ctx context.Context, userID int64) (*UserInfoResponse, common.Error)
 }
