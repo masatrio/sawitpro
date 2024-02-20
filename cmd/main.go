@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"os"
+	"time"
 
 	"github.com/sawitpro/UserService/generated"
 	"github.com/sawitpro/UserService/handler"
@@ -33,8 +34,10 @@ func newServer() generated.ServerInterface {
 
 	if !ok {
 		panic("DATABASE_URL env not set")
-		dbDsn = "postgres://postgres:postgres@localhost:5432/database?sslmode=disable"
 	}
+
+	os.Setenv("TZ", "Asia/Bangkok")
+	time.LoadLocation("Asia/Bangkok")
 
 	repository := postgres.NewClient(postgres.ClientOptions{
 		DSN: dbDsn,

@@ -16,4 +16,6 @@ type ServiceInterface interface {
 	Login(ctx context.Context, params LoginParam) (*LoginResponse, common.Error)
 
 	GetProfile(ctx context.Context, userID int64) (*UserInfoResponse, common.Error)
+
+	UpdateProfile(ctx context.Context, params UpdateProfileParam) (*UpdateProfileResponse, common.Error)
 }
