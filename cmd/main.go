@@ -37,8 +37,12 @@ func newServer() generated.ServerInterface {
 		panic("DATABASE_URL env not set")
 	}
 
-	os.Setenv("TZ", "Asia/Bangkok")
-	time.LoadLocation("Asia/Bangkok")
+	TZ, ok := os.LookupEnv("TZ")
+	if !ok {
+		TZ = "Asia/Bangkok"
+	}
+	os.Setenv("TZ", TZ)
+	time.LoadLocation(TZ)
 
 	repository := postgres.NewClient(postgres.ClientOptions{
 		DSN: dbDsn,
