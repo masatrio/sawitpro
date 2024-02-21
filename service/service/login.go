@@ -8,7 +8,6 @@ import (
 	"github.com/sawitpro/UserService/common/errors"
 	"github.com/sawitpro/UserService/helper"
 	"github.com/sawitpro/UserService/service"
-	"golang.org/x/crypto/bcrypt"
 )
 
 func (s *Service) Login(ctx context.Context, params service.LoginParam) (*service.LoginResponse, common.Error) {
@@ -26,7 +25,7 @@ func (s *Service) Login(ctx context.Context, params service.LoginParam) (*servic
 			errors.BadRequestErrorType)
 	}
 
-	err = bcrypt.CompareHashAndPassword([]byte(user.HashedPassword), []byte(params.Password))
+	err = s.Hasher.CompareHashAndPassword([]byte(user.HashedPassword), []byte(params.Password))
 	if err != nil {
 		return nil, errors.NewError(
 			errors.WrongPhonePasswordErrorMessage,

@@ -51,3 +51,22 @@ func AuthMiddleware(next echo.HandlerFunc) echo.HandlerFunc {
 		return next(ctx)
 	}
 }
+
+// func CreateAuthMiddlewareFunc() echo.MiddlewareFunc {
+// 	return func(next echo.HandlerFunc) echo.HandlerFunc {
+// 		return func(ctx echo.Context) error {
+// 			if _, ok := whitelistPaths[ctx.Request().URL.Path]; ok {
+// 				return next(ctx)
+// 			}
+
+// 			token := getBearerToken(ctx)
+// 			claimsToken, err := helper.ValidateToken(token)
+// 			if err != nil {
+// 				return echo.ErrForbidden
+// 			}
+// 			ctx.Set(common.USER_ID_CTX_KEY, claimsToken.UserID)
+
+// 			return next(ctx)
+// 		}
+// 	}
+// }

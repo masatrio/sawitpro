@@ -28,15 +28,19 @@ func TestRegister(t *testing.T) {
 			expectedUserID: 1,
 		},
 		{
-			name:           "Error DB",
-			phone:          "+628232482440",
-			expectedError:  commonErr.NewError("some error", commonErr.SystemErrorType),
-			expectedUserID: 1,
+			name:          "Error DB",
+			phone:         "+628232482440",
+			expectedError: commonErr.NewError("some error", commonErr.SystemErrorType),
 		},
 		{
 			name:          "Phone Already Used",
 			phone:         "+628232482440",
 			expectedError: commonErr.NewError(commonErr.NewPhoneAlreadyUsedErrorMessage("+628232482440"), commonErr.BadRequestErrorType),
+		},
+		{
+			name:          "Wrong Password",
+			phone:         "+628232482440",
+			expectedError: commonErr.NewError("some error", commonErr.SystemErrorType),
 		},
 		{
 			name:          "Insert User Error",
@@ -51,23 +55,29 @@ func TestRegister(t *testing.T) {
 			defer ctrl.Finish()
 
 			mockRepo := mocks.NewMockRepositoryInterface(ctrl)
+			mockHasher := mocks.NewMockPasswordHasher(ctrl)
 
 			switch tc.name {
 			case "Successful Registration":
 				mockRepo.EXPECT().GetUserByPhone(gomock.Any(), tc.phone).Return(nil, nil)
+				mockHasher.EXPECT().HashPassword(gomock.Any()).Return("any hash password", nil)
 				mockRepo.EXPECT().InsertUser(gomock.Any(), gomock.Any()).Return(&repository.User{ID: tc.expectedUserID}, nil).Times(1)
 			case "Error DB":
 				mockRepo.EXPECT().GetUserByPhone(gomock.Any(), tc.phone).Return(nil, errors.New("some error"))
 			case "Phone Already Used":
 				mockRepo.EXPECT().GetUserByPhone(gomock.Any(), tc.phone).Return(&repository.User{}, nil)
+			case "Wrong Password":
+				mockRepo.EXPECT().GetUserByPhone(gomock.Any(), tc.phone).Return(nil, nil)
+				mockHasher.EXPECT().HashPassword(gomock.Any()).Return("", errors.New("some error"))
 			case "Insert User Error":
 				mockRepo.EXPECT().GetUserByPhone(gomock.Any(), tc.phone).Return(nil, nil)
-
+				mockHasher.EXPECT().HashPassword(gomock.Any()).Return("any hash password", nil)
 				mockRepo.EXPECT().InsertUser(gomock.Any(), gomock.Any()).Return(nil, errors.New("insert user error")).Times(1)
 			}
 
 			svc := NewService(ServiceOpts{
 				Repository: mockRepo,
+				Hasher:     mockHasher,
 			})
 
 			response, err := svc.Register(context.Background(), service.RegisterParam{

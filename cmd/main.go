@@ -7,6 +7,7 @@ import (
 
 	"github.com/sawitpro/UserService/generated"
 	"github.com/sawitpro/UserService/handler"
+	"github.com/sawitpro/UserService/helper/hasher/bcrypt"
 	"github.com/sawitpro/UserService/repository/postgres"
 	"github.com/sawitpro/UserService/service/service"
 
@@ -45,6 +46,7 @@ func newServer() generated.ServerInterface {
 
 	svc := service.NewService(service.ServiceOpts{
 		Repository: repository,
+		Hasher:     bcrypt.NewHasher(),
 	})
 
 	opts := handler.ServerOpts{

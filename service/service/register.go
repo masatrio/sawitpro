@@ -5,7 +5,6 @@ import (
 
 	"github.com/sawitpro/UserService/common"
 	"github.com/sawitpro/UserService/common/errors"
-	"github.com/sawitpro/UserService/helper"
 	"github.com/sawitpro/UserService/repository"
 	"github.com/sawitpro/UserService/service"
 )
@@ -25,7 +24,7 @@ func (s *Service) Register(ctx context.Context, params service.RegisterParam) (*
 			errors.BadRequestErrorType)
 	}
 
-	hashedPassword, err := helper.HashPassword(params.Password)
+	hashedPassword, err := s.Hasher.HashPassword(params.Password)
 	if err != nil {
 		return nil, errors.NewError(
 			err.Error(),

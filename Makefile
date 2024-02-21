@@ -26,12 +26,14 @@ generated: api.yml
 COMMON_INTERFACE := common/interfaces.go
 REPOSITORY_INTERFACE := repository/interfaces.go
 SERVICE_INTERFACE := service/interfaces.go
+HASHER_INTERFACE := helper/hasher/interfaces.go
 
 COMMON_MOCK := mocks/common_mock.gen.go
 REPOSITORY_MOCK := mocks/repository_mock.gen.go
 SERVICE_MOCK := mocks/service_mock.gen.go
+HASHER_MOCK := mocks/hasher_mock.gen.go
 
-generate_mocks: $(COMMON_MOCK) $(REPOSITORY_MOCK) $(SERVICE_MOCK)
+generate_mocks: $(COMMON_MOCK) $(REPOSITORY_MOCK) $(SERVICE_MOCK) $(HASHER_MOCK)
 
 $(COMMON_MOCK): $(COMMON_INTERFACE)
 	@echo "Generating mocks for common interfaces..."
@@ -43,4 +45,8 @@ $(REPOSITORY_MOCK): $(REPOSITORY_INTERFACE)
 
 $(SERVICE_MOCK): $(SERVICE_INTERFACE)
 	@echo "Generating mocks for service interfaces..."
+	mockgen -source=$< -destination=$@ -package=mocks
+
+$(HASHER_MOCK): $(HASHER_INTERFACE)
+	@echo "Generating mocks for hasher interfaces..."
 	mockgen -source=$< -destination=$@ -package=mocks
